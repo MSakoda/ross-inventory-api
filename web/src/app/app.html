@@ -1,0 +1,60 @@
+<main>
+  <h1>Store inventory</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form (ngSubmit)="save()" #f="ngForm">
+    <label>SKU
+      <input name="sku" [(ngModel)]="form.sku" required />
+      @if (fieldErrors()['sku']) { <small class="error">{{ fieldErrors()['sku'] }}</small> }
+    </label>
+    <label>Name
+      <input name="name" [(ngModel)]="form.name" required />
+      @if (fieldErrors()['name']) { <small class="error">{{ fieldErrors()['name'] }}</small> }
+    </label>
+    <label>Quantity
+      <input name="quantity" type="number" [(ngModel)]="form.quantity" />
+      @if (fieldErrors()['quantity']) { <small class="error">{{ fieldErrors()['quantity'] }}</small> }
+    </label>
+    <label>Price
+      <input name="price" type="number" step="0.01" [(ngModel)]="form.price" />
+      @if (fieldErrors()['price']) { <small class="error">{{ fieldErrors()['price'] }}</small> }
+    </label>
+    <div class="actions">
+      <button type="submit">{{ editingId() === null ? 'Add item' : 'Save changes' }}</button>
+      @if (editingId() !== null) { <button type="button" (click)="resetForm()">Cancel</button> }
+    </div>
+  </form>
+
+  @if (pageData(); as data) {
+    <table>
+      <thead>
+        <tr><th>SKU</th><th>Name</th><th>Qty</th><th>Price</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (item of data.content; track item.id) {
+          <tr>
+            <td>{{ item.sku }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+            <td class="actions">
+              <button type="button" (click)="edit(item)">Edit</button>
+              <button type="button" (click)="remove(item)">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5">No items yet.</td></tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pager">
+      <button type="button" [disabled]="data.page === 0" (click)="load(data.page - 1)">Previous</button>
+      <span>Page {{ data.page + 1 }} of {{ data.totalPages || 1 }} ({{ data.totalElements }} items)</span>
+      <button type="button" [disabled]="data.page + 1 >= data.totalPages" (click)="load(data.page + 1)">Next</button>
+    </div>
+  }
+</main>
