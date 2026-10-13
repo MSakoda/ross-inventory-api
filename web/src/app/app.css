@@ -7,3 +7,5 @@ th, td { text-align: left; padding: 0.4rem; border-bottom: 1px solid #ddd; }
 .actions { display: flex; gap: 0.5rem; align-items: end; }
 .pager { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
 .error { color: #b00020; }
+.status { color: #555; font-style: italic; }
+button:disabled { opacity: 0.6; cursor: wait; }

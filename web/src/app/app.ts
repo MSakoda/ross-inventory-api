@@ -17,6 +17,8 @@ export class App {
   protected readonly pageData = signal<Page<Item> | null>(null);
   protected readonly pageIndex = signal(0);
   protected readonly error = signal<string | null>(null);
+  protected readonly busy = signal(false);
+  protected readonly busyLabel = signal('');
   protected readonly fieldErrors = signal<Record<string, string>>({});
   protected readonly editingId = signal<number | null>(null);
   protected form: ItemInput = { ...EMPTY };
@@ -27,8 +29,10 @@ export class App {
   }
 
   protected load(page = this.pageIndex()): void {
+    this.start('Loading items…');
     this.items.list(page, this.pageSize).subscribe({
       next: (data) => {
+        this.busy.set(false);
         this.pageData.set(data);
         this.pageIndex.set(data.page);
         this.error.set(null);
@@ -40,6 +44,7 @@ export class App {
   protected save(): void {
     const id = this.editingId();
     const request = id === null ? this.items.create(this.form) : this.items.update(id, this.form);
+    this.start('Saving…');
     request.subscribe({
       next: () => {
         this.resetForm();
@@ -56,6 +61,7 @@ export class App {
   }
 
   protected remove(item: Item): void {
+    this.start('Deleting…');
     this.items.delete(item.id).subscribe({
       next: () => {
         // Deleting the last row of a page would leave us on an empty page, so step back.
@@ -73,7 +79,13 @@ export class App {
     this.error.set(null);
   }
 
+  private start(label: string): void {
+    this.busyLabel.set(label);
+    this.busy.set(true);
+  }
+
   private fail(e: HttpErrorResponse): void {
+    this.busy.set(false);
     const body = e.error as Partial<ApiError> | null;
     this.fieldErrors.set(body?.fieldErrors ?? {});
     this.error.set(body?.message ?? 'Could not reach the API');

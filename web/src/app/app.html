@@ -5,6 +5,10 @@
     <p class="error">{{ error() }}</p>
   }
 
+  @if (busy()) {
+    <p class="status" role="status">{{ busyLabel() }}</p>
+  }
+
   <form (ngSubmit)="save()" #f="ngForm">
     <label>SKU
       <input name="sku" [(ngModel)]="form.sku" required />
@@ -23,8 +27,8 @@
       @if (fieldErrors()['price']) { <small class="error">{{ fieldErrors()['price'] }}</small> }
     </label>
     <div class="actions">
-      <button type="submit">{{ editingId() === null ? 'Add item' : 'Save changes' }}</button>
-      @if (editingId() !== null) { <button type="button" (click)="resetForm()">Cancel</button> }
+      <button type="submit" [disabled]="busy()">{{ busy() ? busyLabel() : editingId() === null ? 'Add item' : 'Save changes' }}</button>
+      @if (editingId() !== null) { <button type="button" [disabled]="busy()" (click)="resetForm()">Cancel</button> }
     </div>
   </form>
 
@@ -41,8 +45,8 @@
             <td>{{ item.quantity }}</td>
             <td>{{ item.price }}</td>
             <td class="actions">
-              <button type="button" (click)="edit(item)">Edit</button>
-              <button type="button" (click)="remove(item)">Delete</button>
+              <button type="button" [disabled]="busy()" (click)="edit(item)">Edit</button>
+              <button type="button" [disabled]="busy()" (click)="remove(item)">Delete</button>
             </td>
           </tr>
         } @empty {
@@ -52,9 +56,9 @@
     </table>
 
     <div class="pager">
-      <button type="button" [disabled]="data.page === 0" (click)="load(data.page - 1)">Previous</button>
+      <button type="button" [disabled]="busy() || data.page === 0" (click)="load(data.page - 1)">Previous</button>
       <span>Page {{ data.page + 1 }} of {{ data.totalPages || 1 }} ({{ data.totalElements }} items)</span>
-      <button type="button" [disabled]="data.page + 1 >= data.totalPages" (click)="load(data.page + 1)">Next</button>
+      <button type="button" [disabled]="busy() || data.page + 1 >= data.totalPages" (click)="load(data.page + 1)">Next</button>
     </div>
   }
 </main>
