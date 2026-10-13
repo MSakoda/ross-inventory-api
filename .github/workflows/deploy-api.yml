@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: <your-app-name>   # the App Service name you choose in the portal
+  AZURE_WEBAPP_NAME: marcus-inventory-api   # the App Service name you choose in the portal
 
 jobs:
   build-and-deploy:

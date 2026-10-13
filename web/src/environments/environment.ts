@@ -1,5 +1,5 @@
-// Production build (used by ng build). Replace with your App Service URL after you create it.
+// Production build (used by ng build).
 export const environment = {
-  apiUrl: 'https://<your-app-name>.azurewebsites.net/api',
+  apiUrl: 'https://marcus-inventory-api-cuh3b0g0c4bpf6dz.westus3-01.azurewebsites.net/api',
 };
 
